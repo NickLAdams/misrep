@@ -18,7 +18,7 @@ def calculate_price_of_insurance(
     
     return cover_amount * (age/100) * (2 if smoker_status else 1) / (term * 12)
 
-def set_up_chatbot(model: str):
+def set_up_chatbot(model: str, system_message: str):
     config_list = [
         {
             "model": model,
@@ -33,7 +33,7 @@ def set_up_chatbot(model: str):
 
     chatbot = autogen.AssistantAgent(
         name="pricing assistant",
-        system_message="You are a pricing assistant, you will help a customer that is searching for a life insurance policy and give them a price for their cover. In order to do that you must ask the customer for their age, smoker status, amount of cover and the length of the cover",
+        system_message=system_message,
         llm_config=llm_config,
     )
 
@@ -46,7 +46,9 @@ def set_up_chatbot(model: str):
 
 def main(model:str):
 
-    chatbot, user_proxy = set_up_chatbot(model=model)
+    system_message = "You are a pricing assistant, you will help a customer that is searching for a life insurance policy and give them a price for their cover. In order to do that you must ask the customer for their age, smoker status, amount of cover and the length of the cover"
+
+    chatbot, user_proxy = set_up_chatbot(model=model, system_message=system_message)
 
     autogen.agentchat.register_function(
         calculate_price_of_insurance,
